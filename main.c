@@ -266,7 +266,7 @@ int main (void) {
 	uint32_t sonar_3 = -1;
 
 	init_led_GPIOs();
-	init_pwm();
+	//init_pwm();
 	init_lcd();
 	lcd_clr();
 	lcd_init();
@@ -275,19 +275,11 @@ int main (void) {
 
     while (1) {
 
-
+    	haptic_actuator_one(18000);
     	haptic_actuator_two(9000);
-    	int i=0;
-    	for(i=0;i<=9100;i++)   // servo2 going up
-		{
-			speaker_output_one(i);
-			printf("%d\n",i );
-		}
-		for(i=9100;i>=0;i--)   // servo2 going up
-		{
-			speaker_output_one(i);
-			printf("%d\n",i );
-		}
+   		speaker_output_one(100);
+		speaker_output_two(1000);
+
 			Timer0_Wait(500);
 
     }
@@ -300,4 +292,3 @@ void check_failed(uint8_t *file, uint32_t line) {
 	/* Infinite loop */
 	while(1);
 }
-
