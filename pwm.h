@@ -8,7 +8,8 @@
 #ifndef PWM_H_
 #define PWM_H_
 
-void init_pwm();
+void init_pwm(void);
+void init_multiple_pwm(void);
 void set_pwm_value(int value);
 
 

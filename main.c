@@ -271,15 +271,25 @@ int main (void) {
 	lcd_clr();
 	lcd_init();
 
+	init_multiple_pwm();
+
     while (1) {
-    	sonar_3 = pulse_SONAR(SONAR_TRIG_PORTNUM, SONAR_TRIG_PINNUM_3, LPC_TIM3, LPC_TIM1, CAP_PORT_3, CAP_PIN_3);
-    	sonar_2 = pulse_SONAR(SONAR_TRIG_PORTNUM, SONAR_TRIG_PINNUM_2, LPC_TIM2, LPC_TIM1, CAP_PORT_2, CAP_PIN_2);
-    	if (sonar_1 != -1 || sonar_2 != -1 || sonar_3 != -1) {
-    		activate_feedback(sonar_1, sonar_2, sonar_3);
-    	}
-    	printf("SONAR 1: %d\n", sonar_1);
-    	printf("SONAR 2: %d\n", sonar_2);
-    	printf("SONAR 3: %d\n\n", sonar_3);
+
+
+    	haptic_actuator_two(9000);
+    	int i=0;
+    	for(i=0;i<=9100;i++)   // servo2 going up
+		{
+			speaker_output_one(i);
+			printf("%d\n",i );
+		}
+		for(i=9100;i>=0;i--)   // servo2 going up
+		{
+			speaker_output_one(i);
+			printf("%d\n",i );
+		}
+			Timer0_Wait(500);
+
     }
 }
 
