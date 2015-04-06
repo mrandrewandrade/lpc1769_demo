@@ -40,6 +40,7 @@
 #define SONAR_MED 100000
 #define SONAR_MIN 50000
 
+#define POLLING_COUNT 5;
 
 static void init_led_GPIOs(void) {
 	// Initialize button
@@ -264,6 +265,14 @@ int main (void) {
 	uint32_t sonar_1 = -1;
 	uint32_t sonar_2 = -1;
 	uint32_t sonar_3 = -1;
+	
+	uint32_t sonar_1_previous = 10000000;
+	uint32_t sonar_2_previous = 10000000;
+	uint32_t sonar_3_previous = 10000000;
+	
+	int32_t is_approching_1 = 0;
+	int32_t is_approching_2 = 0;
+	int32_t is_approching_3 = 0;
 
 	init_led_GPIOs();
 	//init_pwm();
@@ -274,13 +283,52 @@ int main (void) {
 	init_multiple_pwm();
 
     while (1) {
+	
+	//average the reading values
+	
+        int iii =0;
+        for (iii=0, i<POLLING_COUNT, i++){
+            
+            sonar_3 += pulse_SONAR(SONAR_TRIG_PORTNUM, SONAR_TRIG_PINNUM_3, LPC_TIM3, LPC_TIM1, CAP_PORT_3, CAP_PIN_3);
+            sonar_2 += pulse_SONAR(SONAR_TRIG_PORTNUM, SONAR_TRIG_PINNUM_2, LPC_TIM2, LPC_TIM1, CAP_PORT_2, CAP_PIN_2);    
+        }
+        sonar_1 = sonar_1/POLLING_COUNT;
+        sonar_3 = sonar_3/POLLING_COUNT;
+        sonar_2 = sonar_2/POLLING_COUNT;
 
+	//Distace moved in the poll
+        is_approching_3 = sonar_3_previous - sonar_3;
+        is_approching_2 =  sonar_2_previous - sonar_2;
+        is_approching_1 =  sonar_1_previous - sonar_1;
+
+	//Store previous reading
+        sonar_1_previous = sonar_1;
+        sonar_3_previous = sonar_3;
+        sonar_2_previous = sonar_2;
+
+
+        if (sonar_1 != -1 || sonar_2 != -1 || sonar_3 != -1) {
+            activate_feedback(sonar_1, sonar_2, sonar_3);
+        }
+
+        printf("SONAR 1 distance: %d\n", sonar_1);
+        printf("SONAR 2 prev: %d\n", sonar_1_previous);
+        printf("SONAR 3 approaching: %d\n", is_approching_1);
+
+        printf("SONAR 2 distance: %d\n", sonar_2);
+        printf("SONAR 2 prev: %d\n", sonar_2_previous);
+        printf("SONAR 2 approaching: %d\n", is_approching_2);
+
+        printf("SONAR 3 distance: %d\n\n", sonar_3);
+        printf("SONAR 3 prev: %d\n", sonar_3_previous);
+        printf("SONAR 2 approaching: %d\n", is_approching_3);
+	
+	
     	haptic_actuator_one(18000);
     	haptic_actuator_two(9000);
-   		speaker_output_one(100);
-		speaker_output_two(1000);
-
-			Timer0_Wait(500);
+    	speaker_output_one(100);
+    	speaker_output_two(1000);
+    	Timer0_Wait(500);
 
     }
 }
