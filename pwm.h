@@ -8,7 +8,6 @@
 #ifndef PWM_H_
 #define PWM_H_
 
-void init_pwm(void);
 void init_multiple_pwm(void);
 void pwm_one_on(int pulsewidth);
 void pwm_two_on(int pulsewidth);
