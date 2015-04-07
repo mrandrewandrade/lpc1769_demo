@@ -10,7 +10,11 @@
 
 void init_pwm(void);
 void init_multiple_pwm(void);
-void set_pwm_value(int value);
-
+void pwm_one_on(int pulsewidth)
+void pwm_two_on(int pulsewidth)
+void pwm_three_on(int pulsewidth)
+void pwm_four_on(int pulsewidth)
+void pwm_five_on(int pulsewidth)
+void pwm_six_on(int pulsewidth)
 
 #endif /* PWM_H_ */
