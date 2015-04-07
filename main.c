@@ -139,52 +139,51 @@ void led_state(uint32_t led_portnum, uint32_t led_pinnum, uint32_t sonar_value, 
 	}
 }
 
-void activate_feedback(uint32_t sonar_1, uint32_t sonar_2, uint32_t sonar_3) {
-	uint32_t step = 0;
-	uint32_t min = 0;
-
-	char buffer1 [20] = "";
-	char buffer2 [20] = "";
-	char buffer3 [20] = "";
-
-	// Activate haptic actuators
-	min = min_distance(sonar_1, sonar_2, sonar_3);
-	if (min < SONAR_MIN) {
-		set_pwm_value(15000);
-	} else if (min > SONAR_MIN && min < SONAR_MED) {
-		set_pwm_value(7500);
-	} else if (min > SONAR_MED && min < SONAR_MAX) {
-		set_pwm_value(4000);
-	}
-
-	// Call functions for the LCD and speakers here
-
-	sprintf(buffer1, "SONAR 1: %d", (long)sonar_1);
-	sprintf(buffer2, "SONAR 2: %d", (long)sonar_2);
-	sprintf(buffer3, "SONAR 3: %d", (long)sonar_3);
-	lcd_line1();
-	lcd_string((const char*)buffer1);
-	lcd_line2();
-	lcd_string((const char*)buffer2);
-	lcd_line3();
-	lcd_string((const char*)buffer3);
-
-	// Activate LEDs
-	for (step = 0; step < 24; step++) {
-		led_state(LED_PORTNUM_1, LED_PINNUM_1, sonar_1, step);
-		led_state(LED_PORTNUM_2, LED_PINNUM_2, sonar_2, step);
-		led_state(LED_PORTNUM_3, LED_PINNUM_3, sonar_3, step);
-		Timer0_Wait(50);
-	}
-
-	// Turn off all LEDs
-	GPIO_ClearValue(LED_PORTNUM_1, 1<<LED_PINNUM_1);
-	GPIO_ClearValue(LED_PORTNUM_2, 1<<LED_PINNUM_2);
-	GPIO_ClearValue(LED_PORTNUM_3, 1<<LED_PINNUM_3);
-
-	// Turn off haptic actuators
-	 set_pwm_value(0);
-	// Set all PWM values back to 0, as well as reset speakers and LCD if required
+void activate_feedback(uint32_t sonar_1, uint32_t sonar_2, uint32_t sonar_3, uint32_t is_approaching_1, uint32_t is_approaching_2, uint32_t is_approaching_3) {
+        uint32_t step = 0;
+        uint32_t min = 0;
+ 
+        char buffer1 [20] = "";
+        char buffer2 [20] = "";
+ 
+        // Activate haptic actuators
+        min = min_distance(sonar_1, sonar_2, sonar_3);
+        if (min < SONAR_MIN) {
+                set_pwm_value(PWM_HI);
+        } else if (min > SONAR_MIN && min < SONAR_MED) {
+                set_pwm_value(PWM_MED);
+        } else if (min > SONAR_MED && min < SONAR_MAX) {
+                set_pwm_value(PWM_LO);
+        }
+ 
+        // Call functions for the LCD and speakers here
+ 
+        //Format the LCD display strings with values
+        sprintf(buffer1, "Dist: %d | %d | %d", (long)sonar_1, (long)sonar_2, (long)sonar_3);
+        sprintf(buffer2, "Diff:%d | %d | %d", (long)is_approaching_1, (long)is_approaching_2, (long)is_approaching_3);
+ 
+        //Display the LCD strings
+        lcd_line1();
+        lcd_string((const char*)buffer1);
+        lcd_line2();
+        lcd_string((const char*)buffer2);
+       
+        // Activate LEDs
+        for (step = 0; step < 24; step++) {
+                led_state(LED_PORTNUM_1, LED_PINNUM_1, sonar_1, step);
+                led_state(LED_PORTNUM_2, LED_PINNUM_2, sonar_2, step);
+                led_state(LED_PORTNUM_3, LED_PINNUM_3, sonar_3, step);
+                Timer0_Wait(50);
+        }
+ 
+        // Turn off all LEDs
+        GPIO_ClearValue(LED_PORTNUM_1, 1<<LED_PINNUM_1);
+        GPIO_ClearValue(LED_PORTNUM_2, 1<<LED_PINNUM_2);
+        GPIO_ClearValue(LED_PORTNUM_3, 1<<LED_PINNUM_3);
+ 
+        // Turn off haptic actuators
+         set_pwm_value(0);
+        // Set all PWM values back to 0, as well as reset speakers and LCD if required
 }
 
 uint32_t pulse_SONAR(uint32_t trig_port, uint32_t trig_pin, LPC_TIM_TypeDef *counter, LPC_TIM_TypeDef *timer, uint32_t cap_port, uint32_t cap_pin) {
