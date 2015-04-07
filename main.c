@@ -285,8 +285,10 @@ int main (void) {
     while (1) {
 	
 	//average the reading values
-	
         int iii =0;
+        sonar_1= 0;
+        sonar_2= 0;
+        sonar_3= 0;
         for (iii=0, i<POLLING_COUNT, i++){
             
             sonar_3 += pulse_SONAR(SONAR_TRIG_PORTNUM, SONAR_TRIG_PINNUM_3, LPC_TIM3, LPC_TIM1, CAP_PORT_3, CAP_PIN_3);
@@ -296,7 +298,7 @@ int main (void) {
         sonar_3 = sonar_3/POLLING_COUNT;
         sonar_2 = sonar_2/POLLING_COUNT;
 
-	//Distace moved in the poll
+	//Calculate distace moved in the poll
         is_approching_3 = sonar_3_previous - sonar_3;
         is_approching_2 =  sonar_2_previous - sonar_2;
         is_approching_1 =  sonar_1_previous - sonar_1;
@@ -322,7 +324,6 @@ int main (void) {
         printf("SONAR 3 distance: %d\n\n", sonar_3);
         printf("SONAR 3 prev: %d\n", sonar_3_previous);
         printf("SONAR 2 approaching: %d\n", is_approching_3);
-	
 	
     	haptic_actuator_one(18000);
     	haptic_actuator_two(9000);
