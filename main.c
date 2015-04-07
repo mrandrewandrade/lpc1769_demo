@@ -140,22 +140,13 @@ void led_state(uint32_t led_portnum, uint32_t led_pinnum, uint32_t sonar_value, 
 }
 
 void activate_feedback(uint32_t sonar_1, uint32_t sonar_2, uint32_t sonar_3, uint32_t is_approaching_1, uint32_t is_approaching_2, uint32_t is_approaching_3) {
+        
         uint32_t step = 0;
-        uint32_t min = 0;
+        
  
         char buffer1 [20] = "";
         char buffer2 [20] = "";
- 
-        // Activate haptic actuators
-        min = min_distance(sonar_1, sonar_2, sonar_3);
-        if (min < SONAR_MIN) {
-                set_pwm_value(PWM_HI);
-        } else if (min > SONAR_MIN && min < SONAR_MED) {
-                set_pwm_value(PWM_MED);
-        } else if (min > SONAR_MED && min < SONAR_MAX) {
-                set_pwm_value(PWM_LO);
-        }
- 
+ 	
         // Call functions for the LCD and speakers here
  
         //Format the LCD display strings with values
@@ -176,13 +167,119 @@ void activate_feedback(uint32_t sonar_1, uint32_t sonar_2, uint32_t sonar_3, uin
                 Timer0_Wait(50);
         }
  
+ 	/*
+        // Activate haptic actuators
+        uint32_t min = 0;
+        min = min_distance(sonar_1, sonar_2, sonar_3);
+        if (min < SONAR_MIN) {
+                set_pwm_value(PWM_HI);
+        } else if (min > SONAR_MIN && min < SONAR_MED) {
+                set_pwm_value(PWM_MED);
+        } else if (min > SONAR_MED && min < SONAR_MAX) {
+                set_pwm_value(PWM_LO);
+        }*/
+        
+        uint32_t sonar_1_output=0;
+ 	if (sonar_1 < SONAR_MIN){
+ 		sonar_1_output = PWM_HI;
+ 	}
+ 	else if (sonar_1 > SONAR_MIN && sonar_1 < SONAR_MED){
+ 		sonar_1_output = PWM_MED;
+ 	}
+ 	else if (sonar_1 > SONAR_MED && sonar_1 < SONAR_MAX){
+ 		sonar_1_output = PWM_LO;
+ 	}
+ 	uint32_t sonar_2_output=0;
+ 	if (sonar_2 < SONAR_MIN){
+ 		sonar_2_output = PWM_HI;
+ 	}
+ 	else if (sonar_2 > SONAR_MIN && sonar_2 < SONAR_MED){
+ 		sonar_2_output = PWM_MED;
+ 	}
+ 	else if (sonar_2 > SONAR_MED && sonar_2 < SONAR_MAX){
+ 		sonar_2_output = PWM_LO;
+ 	}
+ 	uint32_t sonar_3_output=0;
+  	if (sonar_3 < SONAR_MIN){
+ 		sonar_3_output = PWM_HI;
+ 	}
+ 	else if (sonar_3 > SONAR_MIN && sonar_3 < SONAR_MED){
+ 		sonar_3_output = PWM_MED;
+ 	}
+ 	else if (sonar_3 > SONAR_MED && sonar_3 < SONAR_MAX){
+ 		sonar_3_output = PWM_LO;
+ 	}
+
+ 	uint32_t APPROACH_HIGH = 10000;
+ 	uint32_t APPROACH_MED = 1000;
+ 	uint32_t APPROACH_LOW = 100;
+ 	
+ 	//set output_x_level from 1-3 based on the speed 
+ 	uint32_t output_1_level = (is_approaching_1 > APPROACH_HIGH) + (is_approaching_1 > APPROACH_MED) + (is_approaching_1 > APPROACH_LOW);
+ 	uint32_t output_2_level = (is_approaching_2 > APPROACH_HIGH) + (is_approaching_2 > APPROACH_MED) + (is_approaching_2 > APPROACH_LOW);
+ 	uint32_t output_3_level = (is_approaching_3 > APPROACH_HIGH) + (is_approaching_3 > APPROACH_MED) + (is_approaching_3 > APPROACH_LOW);
+ 	
+	pwm_one_on(sonar_1_output*(output_1_level== 3));
+	pwm_two_on(sonar_1_output*(output_1_level== 3));
+ 	
+ 	pwm_three_on(sonar_2_output*(output_2_level== 3));
+	pwm_four_on(sonar_2_output*(output_2_level== 3));
+ 	
+ 	pwm_five_on(sonar_3_output*(output_3_level== 3));
+	pwm_six_on(sonar_3_output*(output_3_level== 3));
+
+	Timer0_Wait(50);
+	pwm_one_on(0);
+	pwm_two_on(0);
+ 	pwm_three_on(0);
+ 	pwm_four_on(0);
+ 	pwm_five_on(0);
+ 	pwm_six_on(0);
+	Timer0_Wait(50);
+
+ 	pwm_one_on(sonar_1_output*(output_1_level> 1));
+	pwm_two_on(sonar_1_output*(output_1_level> 1));
+ 	
+ 	pwm_three_on(sonar_2_output*(output_2_level> 1));
+	pwm_four_on(sonar_2_output*(output_2_level> 1));
+ 	
+ 	pwm_five_on(sonar_3_output*(output_3_level> 1));
+	pwm_six_on(sonar_3_output*(output_3_level> 1));
+	
+	Timer0_Wait(50);
+	pwm_one_on(0);
+	pwm_two_on(0);
+ 	pwm_three_on(0);
+ 	pwm_four_on(0);
+ 	pwm_five_on(0);
+ 	pwm_six_on(0);
+	Timer0_Wait(50);
+
+ 	pwm_one_on(sonar_1_output*(output_1_level> 0));
+	pwm_two_on(sonar_1_output*(output_1_level> 0));
+ 	
+ 	pwm_three_on(sonar_2_output*(output_2_level> 0));
+	pwm_four_on(sonar_2_output*(output_2_level> 0));
+ 	
+ 	pwm_five_on(sonar_3_output*(output_3_level> 0));
+	pwm_six_on(sonar_3_output*(output_3_level> 0));
+ 	
+	Timer0_Wait(50);
+	pwm_one_on(0);
+	pwm_two_on(0);
+ 	pwm_three_on(0);
+ 	pwm_four_on(0);
+ 	pwm_five_on(0);
+ 	pwm_six_on(0);
+	Timer0_Wait(50);
+
+ 	
         // Turn off all LEDs
         GPIO_ClearValue(LED_PORTNUM_1, 1<<LED_PINNUM_1);
         GPIO_ClearValue(LED_PORTNUM_2, 1<<LED_PINNUM_2);
         GPIO_ClearValue(LED_PORTNUM_3, 1<<LED_PINNUM_3);
  
-        // Turn off haptic actuators
-         set_pwm_value(0);
+
         // Set all PWM values back to 0, as well as reset speakers and LCD if required
 }
 
@@ -324,12 +421,7 @@ int main (void) {
         printf("SONAR 3 prev: %d\n", sonar_3_previous);
         printf("SONAR 2 approaching: %d\n", is_approching_3);
 	
-    	haptic_actuator_one(18000);
-    	haptic_actuator_two(9000);
-    	speaker_output_one(100);
-    	speaker_output_two(1000);
-    	Timer0_Wait(500);
-
+	activate_feedback(sonar_1, sonar_2, sonar_3, is_approaching_1, is_approaching_2, is_approaching_3);
     }
 }
 
