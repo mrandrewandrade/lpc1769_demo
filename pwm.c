@@ -103,7 +103,7 @@ void pwm_five_on(int pulsewidth)
 {
     //pin45,pwm1.4
     LPC_PWM1->MR0 = 80000; //PWM freq = PWM clock/2000000=100M/2M=50Hz , so T=20ms
-    LPC_PWM1->MR4 = pulsewidth;
+    LPC_PWM1->MR5 = pulsewidth;
     //LPC_PWM1->LER = 0x7F;
     LPC_PWM1 -> LER |= (1<<5);
     LPC_PWM1->MCR = 1 << 1; //Reset timer on Match0
@@ -114,7 +114,7 @@ void pwm_six_on(int pulsewidth)
 {
     //pin45,pwm1.4
     LPC_PWM1->MR0 = 80000; //PWM freq = PWM clock/2000000=100M/2M=50Hz , so T=20ms
-    LPC_PWM1->MR4 = pulsewidth;
+    LPC_PWM1->MR6 = pulsewidth;
     //LPC_PWM1->LER = 0x7F;
     LPC_PWM1 -> LER |= (1<<6);
     LPC_PWM1->MCR = 1 << 1; //Reset timer on Match0
