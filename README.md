@@ -23,5 +23,4 @@ Creating an "Assistive Device for the Elderly" to aide their quality of life.  W
 
 ## Problem
 
-### Constraints
 
