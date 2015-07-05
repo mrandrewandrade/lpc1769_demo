@@ -35,7 +35,7 @@ void init_multiple_pwm(void)
     LPC_PINCON->PINSEL4 |= 1 << 8;
     //P2.4 works as PWM1.6 output.pin47,MR6
     LPC_PINCON->PINSEL4 |= 1 << 10;
-    
+
     //enable P2.1,MR2 neither pull up nor pull down.
     LPC_PINCON->PINMODE4 |= 1 << 1;
     //enable P2.1,MR2 neither pull up nor pull down.
@@ -48,7 +48,7 @@ void init_multiple_pwm(void)
     LPC_PINCON->PINMODE4 |= 1 << 9;
     //enable P2.5,MR6 neither pull up nor pull down.
     LPC_PINCON->PINMODE4 |= 1 << 11;
-    
+
     //Set the sytem clock
     LPC_PWM1->PR = SystemCoreClock / (4 * 1000000) - 1;
 
